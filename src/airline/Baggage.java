@@ -10,14 +10,14 @@ import utilities.DateTime;
 public class Baggage
 {
 	private String id;
-	private double weight;
+	private double weight = 0;
 	private DateTime checkInDate;
 	private DateTime collectedDate;
 	
 	
 	public Baggage(String id, String passengerId, double weight, DateTime checkedInDate)
 	{
-		checkInDate = new DateTime();
+		this.checkInDate = checkedInDate;
 		this.id = id + "_" + passengerId + "_" + checkInDate.getEightDigitDate();
 		this.weight = weight;
 	}
@@ -98,5 +98,13 @@ public class Baggage
 	public double getWeight()
 	{
 		return weight;
+	}
+	public String getId()
+	{
+		return id;
+	}
+	public DateTime getCheckInDate() 
+	{
+		return checkInDate;
 	}
 }

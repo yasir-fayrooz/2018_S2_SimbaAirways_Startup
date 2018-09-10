@@ -11,19 +11,17 @@ public class Booking
 {
 	//Baggage information
 	private String baggageId;
-	private Baggage[] checkedBaggage;
+	private Baggage[] checkedBaggage = new Baggage[3];
 	private Baggage[] previousBaggagesChecked = new Baggage[10];
 	
 	
 	//Seat information
 	private String rowNumber;
 	private String seatNumber;
-	private final String economyBooking = "E";
-	private final String businessBooking = "B";
-	private boolean isExitRowSeat = false;
+	private final String[] bookingClassPrefix = {"E","B"};
 	
 	//Booking cost
-	private double bookingFare;
+	private final double standardFare = 1200;
 	
 	//Name of passenger
 	private String firstName;
@@ -32,58 +30,49 @@ public class Booking
 	
 	public Booking(String id, String rowNumber, String seatNumber, double fee) 
 	{
-		if(checkRowNumberSeatNumber(rowNumber, seatNumber) == false)
-		{
-			System.out.print("Error: Booking row # or seat # out of range.");
-			return;
-		}
-		else
-		{
-			this.rowNumber = rowNumber;
-			this.seatNumber = seatNumber;
-			switch(seatNumber)
-			{
-			case "3":
-				isExitRowSeat = true;
-				break;
-			case "4":
-				isExitRowSeat = true;
-				break;
-			case "6":
-				isExitRowSeat = true;
-				break;
-			case "7":
-				isExitRowSeat = true;
-				break;
-			}
-		}
+		baggageId = bookingClassPrefix[0] + id;
+		checkRowNumberSeatNumber(rowNumber, seatNumber);
 	}
 	
 	private boolean checkRowNumberSeatNumber(String rowNumber, String seatNumber)
 	{
 		String[] seatsIndex = {"A", "B", "C", "D", "E", "F", "G", "H", "I"};
 		String[] rowIndex = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
-		boolean wrongInput = false;
+		boolean invalidSeat = false;
+		boolean invalidRow = false;
 		
 		for(int i = 0; i < seatsIndex.length; i++)
 		{
-			if(!seatNumber.equalsIgnoreCase(seatsIndex[i]))
+			if(seatNumber.equalsIgnoreCase(seatsIndex[i]))
 			{
-				wrongInput = true;
+				invalidSeat = false;
+				break;
 			}
+			else
+				invalidSeat = true;
 		}
 		for(int i = 0; i < rowIndex.length; i++)
 		{
-			if(!rowNumber.equals(rowIndex[i]))
+			if(rowNumber.equals(rowIndex[i]))
 			{
-				wrongInput = true;
+				invalidRow = false;
+				break;
 			}
+			else
+				invalidRow = true;
 		}
 		
-		if(wrongInput)
+		if(invalidSeat || invalidRow)
+		{
+			System.out.print("Error: Booking row # or seat # out of range.\n");
 			return false;
+		}
 		else
+		{
+			this.rowNumber = rowNumber;
+			this.seatNumber = seatNumber;
 			return true;
+		}
 	}
 	
 	
@@ -92,10 +81,16 @@ public class Booking
 		if(this.firstName.equals(firstName) && 
 		   this.lastName.equals(lastName))
 		{
-			return "Error: You have already been booked.";
+			return "Error: You have already been booked.\n";
+		}
+		else if(this.firstName != null)
+		{
+			return "Error: This booking has already been booked by someone.\n";
 		}
 		else 
 		{
+			this.firstName = firstName;
+			this.lastName = lastName;
 			return toString();
 		}
 	}
@@ -103,33 +98,161 @@ public class Booking
 	public String checkInBag(String lastName, double weight)
 	{
 		double totalWeight = weight;
-		for(Baggage b : checkedBaggage)
+		for(int i = 0; i < checkedBaggage.length; i++)
 		{
-			totalWeight += b.getWeight();
+			totalWeight += checkedBaggage[i].getWeight();
 		}
-		if(checkedBaggage.length > 3)
+		if(checkedBaggage[0] != null &&
+		   checkedBaggage[1] != null &&
+		   checkedBaggage[2] != null)
 		{
-			return "Error: Number of bags checked must not exceed 3.";
+			return "Error: Number of bags checked must not exceed 3.\n";
 		}
 		else if(totalWeight > 20.00)
 		{
-			return "Error: Total weight of bags must not exceed 20kg";
+			return "Error: Total weight of bags must not exceed 20kg\n";
 		}
 		else if(!lastName.equalsIgnoreCase(this.lastName))
 		{
-			return "Error: Name does not match name of passeneger of the booking.";
+			return "Error: Name does not match name of passeneger of the booking.\n";
 		}
 		else
+			updateCheckedBaggage(weight);
 			return toString();
 	}
 	
-	public String collectBags(DateTime dateCollected) 
+	private void updateCheckedBaggage(double weight)
 	{
-		for(Baggage b : checkedBaggage)
+		for(int i = 0; i < checkedBaggage.length; i++)
 		{
-			b.collect(dateCollected);
+			if(checkedBaggage[i] == null)
+			{
+				checkedBaggage[i] = new Baggage(baggageId, passengerId(), weight, new DateTime());
+				break;
+			}
 		}
 	}
+	
+	private String passengerId()
+	{
+		String passengerId = "";
+		
+		return passengerId;
+	}
+	
+	public String collectBags(DateTime dateCollected) 
+	{	
+		for(int i = 0; i < checkedBaggage.length; i++)
+		{
+			if(checkedBaggage[i].collect(dateCollected) == false)
+			{
+				return "Error: You cannot collect before baggage has been checked in \n "
+						+ "Or collecting after it has already been collected. \n";
+			}
+			else
+			{
+				for(int j = 9; j >= 0; j--)
+				{
+					if(previousBaggagesChecked[j] != null)
+					{
+						previousBaggagesChecked[j - 1] = previousBaggagesChecked[j];
+					}
+				}
+				previousBaggagesChecked[0] = checkedBaggage[i];
+				checkedBaggage[i] = null;
+			}
+		}
+		firstName = null;
+		lastName = null;
+		return toString();
+	}
+	
+	public String getDetails() 
+	{
+		String id = String.format("%-17s %s\n", "ID:", baggageId);
+		String rowNumber = String.format("%-17s %s\n","Row Number:", this.rowNumber);
+		String seatNumber = String.format("%-17s %s\n","Seat Number:", this.seatNumber);
+		String standardFare = String.format("%-17s %s\n", "Standard Fare:", 
+														this.standardFare);
+		String exitRowCondition = "NO";
+		String exitRow = String.format("%-17s %s\n", "Exit Row:", 
+												exitRowCondition);
+		
+		if(this.rowNumber == null || this.seatNumber == null)
+		{
+			return "";
+		}
+		else if(firstName == null)
+		{	
+			switch(this.rowNumber)
+			{
+			case "3":
+				exitRowCondition = "YES";
+				break;
+			case "4":
+				exitRowCondition = "YES";
+				break;
+			case "6":
+				exitRowCondition = "YES";
+				break;
+			case "7":
+				exitRowCondition = "YES";
+				break;
+			}
+			return id +
+				   rowNumber +
+				   seatNumber +
+			       standardFare +
+				   exitRow;
+		}
+		else if(checkedBaggage[0] == null)
+		{
+			String firstName = String.format("%-17s %s\n", "First Name:", 
+					this.firstName);
+			String lastName = String.format("%-17s %s\n", "Last Name:", 
+					this.lastName);
+			
+			return id +
+					   rowNumber +
+					   seatNumber +
+				       standardFare +
+				       firstName +
+				       lastName +
+					   exitRow;
+		}
+		else
+		{
+			String firstName = String.format("%-17s %s\n", "First Name:", 
+					this.firstName);
+			String lastName = String.format("%-17s %s\n", "Last Name:", 
+					this.lastName);
+			
+			String baggage = "";
+			
+			for(Baggage b : checkedBaggage)
+			{
+				baggage += "________________________________________\n" + 
+						String.format("%-17s %s\n", "Baggage ID:", 
+								b.getId()) +
+						String.format("%-17s %s\n", "Weight:", 
+								b.getWeight()) +
+						String.format("%-17s %s\n", "Check in Date:", 
+								b.getCheckInDate()) +
+							"________________________________________\n";
+			}
+			
+			return id +
+					   rowNumber +
+					   seatNumber +
+				       standardFare +
+				       firstName +
+				       lastName +
+					   exitRow +
+					   baggage;
+		}
+		
+	}
+	
 }
 
 
