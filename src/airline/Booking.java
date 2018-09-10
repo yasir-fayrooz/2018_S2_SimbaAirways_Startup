@@ -78,20 +78,21 @@ public class Booking
 	
 	public String book(String firstName, String lastName)
 	{
-		if(this.firstName.equals(firstName) && 
-		   this.lastName.equals(lastName))
-		{
-			return "Error: You have already been booked.\n";
-		}
-		else if(this.firstName != null)
-		{
-			return "Error: This booking has already been booked by someone.\n";
-		}
-		else 
+		if(this.firstName == null &&
+		   this.lastName == null)
 		{
 			this.firstName = firstName;
 			this.lastName = lastName;
 			return toString();
+		}
+		else if(this.firstName.equals(firstName) && 
+		   this.lastName.equals(lastName))
+		{
+			return "Error: You have already been booked.\n";
+		}
+		else
+		{
+			return "Error: This booking has already been booked by someone.\n";
 		}
 	}
 	
@@ -100,7 +101,10 @@ public class Booking
 		double totalWeight = weight;
 		for(int i = 0; i < checkedBaggage.length; i++)
 		{
-			totalWeight += checkedBaggage[i].getWeight();
+			if(checkedBaggage[i] != null)
+			{
+				totalWeight += checkedBaggage[i].getWeight();
+			}
 		}
 		if(checkedBaggage[0] != null &&
 		   checkedBaggage[1] != null &&
@@ -135,7 +139,7 @@ public class Booking
 	
 	private String passengerId()
 	{
-		String passengerId = "";
+		String passengerId = "YASFAY";
 		
 		return passengerId;
 	}
@@ -175,15 +179,8 @@ public class Booking
 		String standardFare = String.format("%-17s %s\n", "Standard Fare:", 
 														this.standardFare);
 		String exitRowCondition = "NO";
-		String exitRow = String.format("%-17s %s\n", "Exit Row:", 
-												exitRowCondition);
-		
-		if(this.rowNumber == null || this.seatNumber == null)
+		if(this.rowNumber != null)
 		{
-			return "";
-		}
-		else if(firstName == null)
-		{	
 			switch(this.rowNumber)
 			{
 			case "3":
@@ -199,6 +196,16 @@ public class Booking
 				exitRowCondition = "YES";
 				break;
 			}
+		}
+		String exitRow = String.format("%-17s %s\n", "Exit Row:", 
+												exitRowCondition);
+		
+		if(this.rowNumber == null || this.seatNumber == null)
+		{
+			return "";
+		}
+		else if(firstName == null)
+		{	
 			return id +
 				   rowNumber +
 				   seatNumber +
@@ -229,16 +236,19 @@ public class Booking
 			
 			String baggage = "";
 			
-			for(Baggage b : checkedBaggage)
+			for(int i = 0; i < checkedBaggage.length; i++)
 			{
-				baggage += "________________________________________\n" + 
-						String.format("%-17s %s\n", "Baggage ID:", 
-								b.getId()) +
-						String.format("%-17s %s\n", "Weight:", 
-								b.getWeight()) +
-						String.format("%-17s %s\n", "Check in Date:", 
-								b.getCheckInDate()) +
-							"________________________________________\n";
+				if(checkedBaggage[i] != null)
+				{
+					baggage += "________________________________________\n" + 
+							String.format("%-17s %s\n", "Baggage ID:", 
+									checkedBaggage[i].getId()) +
+							String.format("%-17s %s\n", "Weight:", 
+									checkedBaggage[i].getWeight()) +
+							String.format("%-17s %s\n", "Check in Date:", 
+									checkedBaggage[i].getCheckInDate()) +
+								"________________________________________\n";
+				}
 			}
 			
 			return id +

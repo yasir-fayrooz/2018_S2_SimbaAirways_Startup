@@ -13,7 +13,11 @@ public class Driver
 		System.out.println(baggage.getDetails());
 		System.out.println(baggage.toString());
 		
-		Booking b = new Booking("QF1", "11", "h", 1200);
+		Booking b = new Booking("QF1", "5", "h", 1200);
+		b.book("Yasir", "fayrooz");
+		b.checkInBag("fayrooz", 10.77);
+		b.checkInBag("fayrooz", 5.66);
+		b.checkInBag("fayrooz", 4.66);
 		System.out.print(b.getDetails());
 	}
 }
