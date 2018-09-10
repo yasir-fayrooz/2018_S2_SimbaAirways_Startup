@@ -26,7 +26,7 @@ public class Baggage
 	public boolean collect(DateTime collectionDate)
 	{
 		if(collectedDate != null ||
-		   collectedDate != null && collectionDate.equals(checkInDate))
+		   DateTime.diffDays(collectionDate, collectedDate) == 0)
 		{
 			return false;
 		}
@@ -95,4 +95,8 @@ public class Baggage
 		}
 	}
 
+	public double getWeight()
+	{
+		return weight;
+	}
 }
