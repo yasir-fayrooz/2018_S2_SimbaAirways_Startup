@@ -21,7 +21,7 @@ public class Booking
 	private final String[] bookingClassPrefix = {"E","B"};
 	
 	//Booking cost
-	private final double standardFare = 1200;
+	private final double standardFare = 1200.00;
 	
 	//Name of passenger
 	private String firstName;
@@ -70,7 +70,7 @@ public class Booking
 		else
 		{
 			this.rowNumber = rowNumber;
-			this.seatNumber = seatNumber;
+			this.seatNumber = seatNumber.toUpperCase();
 			return true;
 		}
 	}
@@ -139,9 +139,27 @@ public class Booking
 	
 	private String passengerId()
 	{
-		String passengerId = "YASFAY";
+		String firstNameID = "";
+		String lastNameID = "";
+		if(firstName.length() < 3)
+		{
+			firstNameID = firstName.substring(0, firstName.length());
+		}
+		else
+		{
+			firstNameID = firstName.substring(0, 3);
+		}
+		if(lastName.length() < 3)
+		{
+			lastNameID = lastName.substring(0, lastName.length());
+		}
+		else
+		{
+			lastNameID = lastName.substring(0, 3);
+		}
+		String passengerId = firstNameID + lastNameID;
 		
-		return passengerId;
+		return passengerId.toUpperCase();
 	}
 	
 	public String collectBags(DateTime dateCollected) 
@@ -155,6 +173,7 @@ public class Booking
 			}
 			else
 			{
+				checkedBaggage[i].collect(dateCollected);
 				for(int j = 9; j >= 0; j--)
 				{
 					if(previousBaggagesChecked[j] != null)
@@ -171,13 +190,8 @@ public class Booking
 		return toString();
 	}
 	
-	public String getDetails() 
+	private String exitRowCondition()
 	{
-		String id = String.format("%-17s %s\n", "ID:", baggageId);
-		String rowNumber = String.format("%-17s %s\n","Row Number:", this.rowNumber);
-		String seatNumber = String.format("%-17s %s\n","Seat Number:", this.seatNumber);
-		String standardFare = String.format("%-17s %s\n", "Standard Fare:", 
-														this.standardFare);
 		String exitRowCondition = "NO";
 		if(this.rowNumber != null)
 		{
@@ -197,8 +211,19 @@ public class Booking
 				break;
 			}
 		}
+		return exitRowCondition;
+	}
+	
+	public String getDetails() 
+	{
+		String id = String.format("%-17s %s\n", "ID:", baggageId);
+		String rowNumber = String.format("%-17s %s\n","Row Number:", this.rowNumber);
+		String seatNumber = String.format("%-17s %s\n","Seat Number:", this.seatNumber);
+		String standardFare = String.format("%-17s %s\n", "Standard Fare:", 
+														"$" + this.standardFare);
+		
 		String exitRow = String.format("%-17s %s\n", "Exit Row:", 
-												exitRowCondition);
+												exitRowCondition());
 		
 		if(this.rowNumber == null || this.seatNumber == null)
 		{
@@ -244,9 +269,9 @@ public class Booking
 							String.format("%-17s %s\n", "Baggage ID:", 
 									checkedBaggage[i].getId()) +
 							String.format("%-17s %s\n", "Weight:", 
-									checkedBaggage[i].getWeight()) +
+									checkedBaggage[i].getWeight() + " kg") +
 							String.format("%-17s %s\n", "Check in Date:", 
-									checkedBaggage[i].getCheckInDate()) +
+									checkedBaggage[i].getCheckInDate().getFormattedDate()) +
 								"________________________________________\n";
 				}
 			}
@@ -263,6 +288,28 @@ public class Booking
 		
 	}
 	
+	public String toString()
+	{
+		String checkedBags = "";
+		for(int i = 0; i < checkedBaggage.length; i++)
+		{
+			if(checkedBaggage[i] != null)
+			{
+				checkedBags += ":" + checkedBaggage[i].toString();
+			}
+		}
+		return baggageId + ":" +
+	           rowNumber + ":" +
+			   seatNumber + ":" +
+	           standardFare + ":" +
+			   firstName + ":" +
+	           lastName + ":" +
+			   exitRowCondition() +
+			   checkedBags;		   
+	}
+
+	
+
 }
 
 
