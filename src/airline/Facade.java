@@ -1,6 +1,7 @@
 package airline;
 
 import application.AirlineSystem;
+import application.SimbaAirways;
 import utilities.DateTime;
 
 /*
@@ -14,11 +15,12 @@ import utilities.DateTime;
  */
 public class Facade implements AirlineSystem
 {
+	SimbaAirways simbaAirways = new SimbaAirways();
 
 	@Override
 	public String addEconomySeat(String id, String rowNumber, String seatNumber)
 	{
-		return "";
+		return simbaAirways.addEconomySeat(id, rowNumber, seatNumber);
 	}
 	
 	@Override
@@ -30,19 +32,19 @@ public class Facade implements AirlineSystem
 	@Override
 	public String book(String flightId, String seatNumber, String firstName, String lastName)
 	{
-		return "";
+		return simbaAirways.book(flightId, seatNumber, firstName, lastName);
 	}
 	
 	@Override
 	public String checkBaggage(String flightId, String seatNumber,String lastName, double weight)
 	{
-		return "";
+		return simbaAirways.checkBaggage(flightId, seatNumber, lastName, weight);
 	}
 	
 	@Override
 	public String collectBaggage(String flightId, String seatNumber, String lastName, DateTime dateOfCollection)
 	{
-		return "";
+		return simbaAirways.collectBaggage(flightId, seatNumber, lastName, dateOfCollection);
 	}
 	
 	public boolean getItemById(String flightId, String seatNumber)
@@ -59,7 +61,7 @@ public class Facade implements AirlineSystem
 	@Override
 	public String displayAllBookings()
 	{
-		return "";		
+		return simbaAirways.displayAllBookings();		
 	}
 
 	@Override
@@ -71,7 +73,7 @@ public class Facade implements AirlineSystem
 	@Override
 	public void seedData()
 	{
-		
+		simbaAirways.seedData();
 	}
 
 	@Override
@@ -83,24 +85,24 @@ public class Facade implements AirlineSystem
 	@Override
 	public boolean checkIfBookingExists(String flightId, String seatNumber)
 	{
-		return false;
+		return simbaAirways.checkIfBookingExists(flightId, seatNumber);
 	}
 
 	@Override
 	public String displayBooking(String id, String seatId)
 	{
-		return "";
+		return simbaAirways.displayBooking(id, seatId);
 	}
 
 	@Override
 	public String displayHistoricalBaggage(String id, String seatId)
 	{
-		return "";
+		return simbaAirways.displayHistoricalBaggage(id, seatId);
 	}
 
 	@Override
 	public String isValidId(String id, String seatId)
 	{
-		return "";
+		return simbaAirways.isValidId(id, seatId);
 	}
 }

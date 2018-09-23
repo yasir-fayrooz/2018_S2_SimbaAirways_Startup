@@ -12,7 +12,7 @@ public class Baggage
 	private String id;
 	private double weight = 0;
 	private DateTime checkInDate;
-	private DateTime collectedDate;
+	private DateTime collectedDate = null;
 	
 	
 	public Baggage(String id, String passengerId, double weight, DateTime checkedInDate)
@@ -25,8 +25,7 @@ public class Baggage
 	
 	public boolean collect(DateTime collectionDate)
 	{
-		if(collectedDate != null ||
-		   DateTime.diffDays(collectionDate, collectedDate) == 0)
+		if(collectedDate != null)
 		{
 			return false;
 		}

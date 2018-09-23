@@ -21,7 +21,7 @@ public class Booking
 	private final String[] bookingClassPrefix = {"E","B"};
 	
 	//Booking cost
-	private final double standardFare = 1200.00;
+	private double standardFare;
 	
 	//Name of passenger
 	private String firstName;
@@ -31,48 +31,9 @@ public class Booking
 	public Booking(String id, String rowNumber, String seatNumber, double fee) 
 	{
 		baggageId = bookingClassPrefix[0] + id;
-		checkRowNumberSeatNumber(rowNumber, seatNumber);
-	}
-	
-	private boolean checkRowNumberSeatNumber(String rowNumber, String seatNumber)
-	{
-		String[] seatsIndex = {"A", "B", "C", "D", "E", "F", "G", "H", "I"};
-		String[] rowIndex = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
-		boolean invalidSeat = false;
-		boolean invalidRow = false;
-		
-		for(int i = 0; i < seatsIndex.length; i++)
-		{
-			if(seatNumber.equalsIgnoreCase(seatsIndex[i]))
-			{
-				invalidSeat = false;
-				break;
-			}
-			else
-				invalidSeat = true;
-		}
-		for(int i = 0; i < rowIndex.length; i++)
-		{
-			if(rowNumber.equals(rowIndex[i]))
-			{
-				invalidRow = false;
-				break;
-			}
-			else
-				invalidRow = true;
-		}
-		
-		if(invalidSeat || invalidRow)
-		{
-			System.out.print("Error: Booking row # or seat # out of range.\n");
-			return false;
-		}
-		else
-		{
-			this.rowNumber = rowNumber;
-			this.seatNumber = seatNumber.toUpperCase();
-			return true;
-		}
+		this.rowNumber = rowNumber;
+		this.seatNumber = seatNumber;
+		this.standardFare = fee;
 	}
 	
 	
@@ -122,7 +83,7 @@ public class Booking
 		}
 		else
 			updateCheckedBaggage(weight);
-			return toString();
+			return getDetails();
 	}
 	
 	private void updateCheckedBaggage(double weight)
@@ -135,6 +96,27 @@ public class Booking
 				break;
 			}
 		}
+	}
+	
+	public String getBaggageHistory()
+	{
+		String baggageHistory = "";
+		
+		for(Baggage b : previousBaggagesChecked)
+		{
+			if(b == null) {}
+			else
+			{
+				baggageHistory += b.getDetails();
+				baggageHistory += "--------------------------------------\n";
+			}
+		}
+		if(baggageHistory.equals(""))
+			return "Error: No baggage history." +
+		           "\nPlease collect baggage to update the history.\n";
+		else
+			return "         Newest - Oldest\n" +
+					baggageHistory;
 	}
 	
 	private String passengerId()
@@ -166,28 +148,40 @@ public class Booking
 	{	
 		for(int i = 0; i < checkedBaggage.length; i++)
 		{
-			if(checkedBaggage[i].collect(dateCollected) == false)
-			{
-				return "Error: You cannot collect before baggage has been checked in \n "
-						+ "Or collecting after it has already been collected. \n";
-			}
-			else
-			{
-				checkedBaggage[i].collect(dateCollected);
-				for(int j = 9; j >= 0; j--)
+			if(checkedBaggage[0] == null)
 				{
-					if(previousBaggagesChecked[j] != null)
-					{
-						previousBaggagesChecked[j - 1] = previousBaggagesChecked[j];
-					}
+					return "Error: You cannot collect before baggage has been checked in\n"
+							+ "       Or collecting after it has already been collected. \n";
 				}
-				previousBaggagesChecked[0] = checkedBaggage[i];
-				checkedBaggage[i] = null;
+		}
+		
+		for(int i = 0; i < checkedBaggage.length; i++)
+		{
+			if(checkedBaggage[i] != null)
+			{
+				if(checkedBaggage[i].collect(dateCollected) == true)
+				{
+					if(previousBaggagesChecked[9] != null)
+					{
+						previousBaggagesChecked[9] = null;
+					}
+					for(int j = 8; j >= 0; j--)
+					{
+						if(previousBaggagesChecked[j] != null)
+						{
+							previousBaggagesChecked[j + 1] = previousBaggagesChecked[j];
+							previousBaggagesChecked[j] = null;
+						}
+					}
+					previousBaggagesChecked[0] = checkedBaggage[i];
+					checkedBaggage[i] = null;
+					
+				}
 			}
 		}
 		firstName = null;
 		lastName = null;
-		return toString();
+		return "Baggage collection successfull \n" + toString();
 	}
 	
 	private String exitRowCondition()
