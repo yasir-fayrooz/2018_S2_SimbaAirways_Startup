@@ -26,7 +26,7 @@ public class Facade implements AirlineSystem
 	@Override
 	public String addBusinessSeat(String id, String rowNumber, String seatNumber) 
 	{
-		return "";
+		return simbaAirways.addBusinessSeat(id, rowNumber, seatNumber);
 	}
 	
 	@Override
@@ -104,5 +104,11 @@ public class Facade implements AirlineSystem
 	public String isValidId(String id, String seatId)
 	{
 		return simbaAirways.isValidId(id, seatId);
+	}
+	
+	@Override
+	public boolean bookLimosine(String id, String seatId)
+	{
+		return simbaAirways.bookLimosine(id, seatId);
 	}
 }

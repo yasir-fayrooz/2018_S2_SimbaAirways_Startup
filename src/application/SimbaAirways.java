@@ -1,6 +1,8 @@
 package application;
 
 import airline.Booking;
+import airline.Business;
+import airline.Economy;
 import utilities.DateTime;
 
 /*
@@ -12,6 +14,7 @@ import utilities.DateTime;
 public class SimbaAirways
 {
 	Booking[] bookings = new Booking[0];
+	private String EconomyOrBusiness = null;
 	
 	
 	private String toStringIndex(String toString, int startingColonIndex, int endingColonIndex)
@@ -43,17 +46,46 @@ public class SimbaAirways
 	}
 	public String addEconomySeat(String id, String rowNumber, String seatNumber)
 	{
-		for(Booking b : bookings)
+		if(checkIfBookingExists(id, rowNumber + seatNumber) == true)
 		{
-			if(toStringIndex(b.toString(), 0, 1).substring(1, 4).equalsIgnoreCase(id) &&
-			   toStringIndex(b.toString(), 1, 2).equalsIgnoreCase(rowNumber) &&
-			   toStringIndex(b.toString(), 2, 3).equalsIgnoreCase(rowNumber))
-				return "Error: Booking has already been added.";
+			return "Error: Booking has already been added.";
 		}
 		updateBookingsArray();
-		bookings[0] = new Booking(id.toUpperCase(), rowNumber.toUpperCase(), seatNumber, 1200.00);
+		bookings[0] = new Economy("E" + id.toUpperCase(), rowNumber.toUpperCase(), seatNumber, 1200.00);
 		return "New Economy booking added successfully for booking id: " + id.toUpperCase();
+	}
+	public String addBusinessSeat(String id, String rowNumber, String seatNumber)
+	{
+		if(checkIfBookingExists(id, rowNumber + seatNumber) == true)
+		{
+			return "Error: Booking has already been added.";
+		}
+		updateBookingsArray();
+		bookings[0] = new Business("B" + id.toUpperCase(), rowNumber.toUpperCase(), seatNumber, 2400.00);
+		return "New Business booking added successfully for booking id: " + id.toUpperCase();
 		
+	}
+	
+	public boolean bookLimosine(String flightId, String seatId)
+	{
+		for(Booking b : bookings)
+		{
+			if(b instanceof Business)
+			{
+				String seatNo = toStringIndex(b.toString(), 1, 2) + 
+						toStringIndex(b.toString(), 2, 3);
+				String flightNo = toStringIndex(b.toString(), 0, 1).substring(1, 4);
+				
+				if(flightNo.equalsIgnoreCase(flightId) &&
+				   seatNo.equalsIgnoreCase(seatId))
+				{
+					((Business) b).setLimosinePickUp(true);
+					return true;
+				}
+			}
+		}
+		System.out.println("Error: Unspecified limosine error occurred.");
+		return false;
 	}
 	
 	public String book(String flightId, String seatNumber, String firstName, String lastName)
@@ -62,18 +94,37 @@ public class SimbaAirways
 		{
 			String seatNo = toStringIndex(b.toString(), 1, 2) + toStringIndex(b.toString(), 2, 3);
 			String id = toStringIndex(b.toString(), 0, 1).substring(1, 4);
+			String EorB = toStringIndex(b.toString(), 0, 1).substring(0, 1);
 			
 			if(seatNo.equalsIgnoreCase(seatNumber) &&
 			   id.equalsIgnoreCase(flightId))
 			{
-				if(b.book(firstName, lastName).equalsIgnoreCase(b.toString()))
+				if(EorB.equalsIgnoreCase("B") && EconomyOrBusiness == null)
 				{
-					return "The flight: " + 
-							toStringIndex(b.toString(), 0, 1) + " - " + 
-							seatNumber.toUpperCase() + " has been successfully booked.";
+					EconomyOrBusiness = "B";
+					return "B";
+				} 
+				else if(EorB.equalsIgnoreCase("E") && EconomyOrBusiness == null)
+				{
+					EconomyOrBusiness = "E";
+					return "E";
 				}
-				else
-					return b.book(firstName, lastName);
+				else 
+				{
+					if(b.book(firstName, lastName).equalsIgnoreCase(b.toString()))
+					{
+						EconomyOrBusiness = null;
+						return "The flight: " + 
+								toStringIndex(b.toString(), 0, 1) + " - " + 
+								seatNumber.toUpperCase() + " has been successfully booked.";
+					}
+					else
+					{
+						EconomyOrBusiness = null;
+						return b.book(firstName, lastName);
+					}
+					
+				}
 			}
 		}
 		return "Error - The booking could not be completed";
@@ -197,34 +248,74 @@ public class SimbaAirways
 		}
 		else
 		{
-			bookings = new Booking[5];
+			bookings = new Booking[12];
 			//First seed
-			bookings[0] = new Booking("SE1", "A", "1", 1200.00);
+			bookings[0] = new Economy("ESE1", "A", "1", 1200.00);
 			
 			//Second seed
-			bookings[1] = new Booking("SE2", "A", "1", 1200.00);
+			bookings[1] = new Economy("ESE2", "A", "1", 1200.00);
 			bookings[1].book("Seed", "Data");
 			
 			//Third seed
-			bookings[2] = new Booking("SE3", "A", "1", 1200.00);
+			bookings[2] = new Economy("ESE3", "A", "1", 1200.00);
 			bookings[2].book("Seed", "Data");
 			bookings[2].checkInBag("Data", 10);
 			bookings[2].checkInBag("Data", 5);
 			
 			//Fourth seed
-			bookings[3] = new Booking("SE4", "A", "1", 1200.00);
+			bookings[3] = new Economy("ESE4", "A", "1", 1200.00);
 			bookings[3].book("Seed", "Data");
 			bookings[3].checkInBag("Data", 10);
 			bookings[3].checkInBag("Data", 5);
 			bookings[3].checkInBag("Data", 7);
 			
 			//Fifth seed
-			bookings[4] = new Booking("SE5", "A", "1", 1200.00);
+			bookings[4] = new Economy("ESE5", "A", "1", 1200.00);
 			bookings[4].book("Seed", "Data");
 			bookings[4].checkInBag("Data", 10);
 			bookings[4].checkInBag("Data", 5);
 			bookings[4].checkInBag("Data", 5);
 			bookings[4].collectBags(new DateTime(1));
+			
+			//Business seeds:
+			
+			//Sixth seed
+			bookings[5] = new Business("BSB1", "A", "1", 2400.00);
+			
+			//Seventh seed
+			bookings[6] = new Business("BSB2", "A", "1", 2400.00);
+			bookings[6].book("Seed", "Data");
+			
+			//Eighth seed
+			bookings[7] = new Business("BSB3", "A", "1", 2400.00);
+			bookings[7].book("Seed", "Data");
+			bookings[7].checkInBag("Data", 10);
+			bookings[7].checkInBag("Data", 5);
+			
+			//Ninth seed
+			bookings[8] = new Business("BSB4", "A", "1", 2400.00);
+			bookings[8].book("Seed", "Data");
+			bookings[8].checkInBag("Data", 10);
+			bookings[8].checkInBag("Data", 5);
+			bookings[8].checkInBag("Data", 7);
+			
+			//Tenth seed
+			bookings[9] = new Business("BSB5", "A", "1", 2400.00);
+			bookings[9].book("Seed", "Data");
+			bookings[9].checkInBag("Data", 10);
+			bookings[9].checkInBag("Data", 5);
+			bookings[9].checkInBag("Data", 5);
+			bookings[9].collectBags(new DateTime(1));
+			
+			//Eleventh seed
+			bookings[10] = new Business("BSB6", "A", "1", 2400.00);
+			bookings[10].book("Seed", "Data");
+			((Business)bookings[10]).setLimosinePickUp(true);
+			
+			//Twelfth seed
+			bookings[11] = new Business("BSB7", "A", "1", 2400.00);
+			bookings[11].book("Seed", "Data");
+			((Business)bookings[11]).setLimosinePickUp(false);
 			
 			System.out.println("\nSeed data added successfully.");
 		}

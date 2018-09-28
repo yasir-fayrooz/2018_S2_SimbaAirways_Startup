@@ -131,7 +131,7 @@ public class Menu
 	{
 		facade.seedData();
 		System.out.print("Press enter to go back to the menu...\n");
-		input = scanner.nextLine();
+		input = scanner.nextLine();			
 	}
 	private void displayHistoricalBaggage()
 	{
@@ -341,6 +341,21 @@ public class Menu
 			System.out.print("Enter Last Name:");
 			lastName = scanner.nextLine(); if(c(lastName)) break;
 		}
+		
+		if(returnToMenu == false && 
+		   facade.book(flightId, seatId, firstName, lastName).equals("B"))
+		{
+			while(!input.equalsIgnoreCase("Y") && !input.equalsIgnoreCase("N"))
+			{
+				System.out.print("Would you like to book a limosine? (Y/N):");
+				input = scanner.nextLine();
+			}
+			if(input.equalsIgnoreCase("Y"))
+			{
+				bookLimosine(flightId, seatId);	
+			}
+		}
+		
 		if(returnToMenu == false)
 		{
 			System.out.println(facade.book(flightId, seatId, firstName, lastName));
@@ -348,6 +363,12 @@ public class Menu
 			input = scanner.nextLine();
 		}
 	}
+	
+	private boolean bookLimosine(String flightId, String seatId)
+	{
+		return facade.bookLimosine(flightId, seatId);
+	}
+	
 	private void addBooking()
 	{
 		String id = "Must be 2 letters followed by a number (excluding 0)";
@@ -373,12 +394,26 @@ public class Menu
 			seatNumber = scanner.nextLine(); if(c(seatNumber)) break;
 			if(rowNumber.length() > 1)
 				System.out.println("Error: Row must be between A - I");
-			else
+			else if(!facade.isValidId(id, rowNumber + seatNumber).equals("Validated ID"))
 				System.out.println(facade.isValidId(id, rowNumber + seatNumber));
 		}
-		if(facade.isValidId(id, rowNumber + seatNumber).equals("Validated ID") && returnToMenu == false)
+		
+		if(returnToMenu == false)
+		economyOrBusiness = validateEconomyOrBusiness();
+		
+		if(returnToMenu == false)
 		{
-			System.out.println(facade.addEconomySeat(id, rowNumber, seatNumber));
+			switch(economyOrBusiness)
+			{
+			case "E":
+				System.out.println(facade.addEconomySeat(id, rowNumber, seatNumber));
+				break;
+			case "B":
+				System.out.println(facade.addBusinessSeat(id, rowNumber, seatNumber));
+				break;
+			default:
+				System.out.println("Error: Unspecified booking error...");
+			}
 			System.out.print("Press enter to go back to the menu...\n");
 			input = scanner.nextLine();
 		}
@@ -408,7 +443,7 @@ public class Menu
 		{
 			System.out.print("Enter Economy or Business (E/B):");
 			input = scanner.nextLine();
-			if(input.equalsIgnoreCase("Menu")) {return "Menu";}
+			if(input.equalsIgnoreCase("")) {returnToMenu = true; break;}
 			
 			for(int i = 0; i < EcoOrBusIndex.length; i ++)
 			{

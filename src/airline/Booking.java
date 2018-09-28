@@ -18,10 +18,9 @@ public class Booking
 	//Seat information
 	private String rowNumber;
 	private String seatNumber;
-	private final String[] bookingClassPrefix = {"E","B"};
 	
 	//Booking cost
-	private double standardFare;
+	private double standardFare = 1200.00;
 	
 	//Name of passenger
 	private String firstName;
@@ -30,7 +29,7 @@ public class Booking
 	
 	public Booking(String id, String rowNumber, String seatNumber, double fee) 
 	{
-		baggageId = bookingClassPrefix[0] + id;
+		baggageId = id;
 		this.rowNumber = rowNumber;
 		this.seatNumber = seatNumber;
 		this.standardFare = fee;
@@ -181,31 +180,38 @@ public class Booking
 		}
 		firstName = null;
 		lastName = null;
+		standardFare = 1200.00;
 		return "Baggage collection successfull \n" + toString();
 	}
 	
-	private String exitRowCondition()
+	public String calculateExitRow()
 	{
-		String exitRowCondition = "NO";
-		if(this.rowNumber != null)
+		switch(this.seatNumber)
 		{
-			switch(this.rowNumber)
-			{
-			case "3":
-				exitRowCondition = "YES";
-				break;
-			case "4":
-				exitRowCondition = "YES";
-				break;
-			case "6":
-				exitRowCondition = "YES";
-				break;
-			case "7":
-				exitRowCondition = "YES";
-				break;
-			}
+		case "3":
+			return "YES";
+		case "4":
+			return "YES";
+		case "6":
+			return "YES";
+		case "7":
+			return "YES";
 		}
-		return exitRowCondition;
+		return "NO";
+	}
+	
+	public void setAdditionalFee(double fee)
+	{
+		if(fee < 0)
+		{
+			
+		}else
+			standardFare += fee;
+	}
+	
+	public Baggage[] getCheckedBaggage()
+	{
+		return checkedBaggage;
 	}
 	
 	public String getDetails() 
@@ -217,13 +223,9 @@ public class Booking
 														"$" + this.standardFare);
 		
 		String exitRow = String.format("%-17s %s\n", "Exit Row:", 
-												exitRowCondition());
+												calculateExitRow());
 		
-		if(this.rowNumber == null || this.seatNumber == null)
-		{
-			return "";
-		}
-		else if(firstName == null)
+		if(firstName == null)
 		{	
 			return id +
 				   rowNumber +
@@ -289,7 +291,7 @@ public class Booking
 		{
 			if(checkedBaggage[i] != null)
 			{
-				checkedBags += ":" + checkedBaggage[i].toString();
+				checkedBags += checkedBaggage[i].toString() + ":";
 			}
 		}
 		return baggageId + ":" +
@@ -298,7 +300,7 @@ public class Booking
 	           standardFare + ":" +
 			   firstName + ":" +
 	           lastName + ":" +
-			   exitRowCondition() +
+			   calculateExitRow() + ":" +
 			   checkedBags;		   
 	}
 

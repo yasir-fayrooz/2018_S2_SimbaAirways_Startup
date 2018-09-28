@@ -38,5 +38,7 @@ public interface AirlineSystem
 	public void writeData();
 	
 	public String isValidId(String id, String seatId);
+	
+	public boolean bookLimosine(String id, String seatId);
 
 }
