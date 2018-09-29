@@ -4,6 +4,8 @@ import airline.Booking;
 import airline.Business;
 import airline.Economy;
 import utilities.DateTime;
+import utilities.InvalidDate;
+import utilities.InvalidId;
 
 /*
  * Class:			AirlineSystem
@@ -51,7 +53,11 @@ public class SimbaAirways
 			return "Error: Booking has already been added.";
 		}
 		updateBookingsArray();
-		bookings[0] = new Economy("E" + id.toUpperCase(), rowNumber.toUpperCase(), seatNumber, 1200.00);
+		try{bookings[0] = new Economy("E" + id.toUpperCase(), rowNumber.toUpperCase(), seatNumber, 1200.00);}
+		catch (InvalidId e){
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
 		return "New Economy booking added successfully for booking id: " + id.toUpperCase();
 	}
 	public String addBusinessSeat(String id, String rowNumber, String seatNumber)
@@ -61,7 +67,11 @@ public class SimbaAirways
 			return "Error: Booking has already been added.";
 		}
 		updateBookingsArray();
-		bookings[0] = new Business("B" + id.toUpperCase(), rowNumber.toUpperCase(), seatNumber, 2400.00);
+		try{bookings[0] = new Business("B" + id.toUpperCase(), rowNumber.toUpperCase(), seatNumber, 2400.00);}
+		catch (InvalidId e){
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
 		return "New Business booking added successfully for booking id: " + id.toUpperCase();
 		
 	}
@@ -90,6 +100,11 @@ public class SimbaAirways
 	
 	public String book(String flightId, String seatNumber, String firstName, String lastName)
 	{
+		if(flightId.equals("returnToMenu"))
+		{
+			EconomyOrBusiness = null;
+			return "";
+		}
 		for(Booking b : bookings)
 		{
 			String seatNo = toStringIndex(b.toString(), 1, 2) + toStringIndex(b.toString(), 2, 3);
@@ -186,7 +201,12 @@ public class SimbaAirways
 			   seatNo.equalsIgnoreCase(seatNumber) &&
 			   lName.equalsIgnoreCase(lastName))
 			{
-				return bookings[i].collectBags(dateOfCollection);
+				try {
+					bookings[i].collectBags(dateOfCollection);
+				} catch (InvalidDate e){
+					System.out.println(e.getMessage());
+					e.printStackTrace();
+				}
 			}
 		}
 		return "The booking was not found.";
@@ -250,70 +270,79 @@ public class SimbaAirways
 		{
 			bookings = new Booking[12];
 			//First seed
-			bookings[0] = new Economy("ESE1", "A", "1", 1200.00);
-			
+			try{bookings[0] = new Economy("ESE1", "A", "1", 1200.00);} catch (InvalidId e) {}
 			//Second seed
-			bookings[1] = new Economy("ESE2", "A", "1", 1200.00);
+			try{bookings[1] = new Economy("ESE2", "A", "1", 1200.00);} catch (InvalidId e) {}
 			bookings[1].book("Seed", "Data");
 			
 			//Third seed
-			bookings[2] = new Economy("ESE3", "A", "1", 1200.00);
+			try{bookings[2] = new Economy("ESE3", "A", "1", 1200.00);} catch (InvalidId e) {}
 			bookings[2].book("Seed", "Data");
 			bookings[2].checkInBag("Data", 10);
 			bookings[2].checkInBag("Data", 5);
 			
 			//Fourth seed
-			bookings[3] = new Economy("ESE4", "A", "1", 1200.00);
+			try{bookings[3] = new Economy("ESE4", "A", "1", 1200.00);} catch (InvalidId e) {}
 			bookings[3].book("Seed", "Data");
 			bookings[3].checkInBag("Data", 10);
 			bookings[3].checkInBag("Data", 5);
 			bookings[3].checkInBag("Data", 7);
 			
 			//Fifth seed
-			bookings[4] = new Economy("ESE5", "A", "1", 1200.00);
+			try{bookings[4] = new Economy("ESE5", "A", "1", 1200.00);} catch (InvalidId e) {}
 			bookings[4].book("Seed", "Data");
 			bookings[4].checkInBag("Data", 10);
 			bookings[4].checkInBag("Data", 5);
 			bookings[4].checkInBag("Data", 5);
-			bookings[4].collectBags(new DateTime(1));
+			try {
+				bookings[4].collectBags(new DateTime(1));
+			} catch (InvalidDate e){
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+			}
 			
 			//Business seeds:
 			
 			//Sixth seed
-			bookings[5] = new Business("BSB1", "A", "1", 2400.00);
+			try{bookings[5] = new Business("BSB1", "A", "1", 2400.00);} catch (InvalidId e) {}
 			
 			//Seventh seed
-			bookings[6] = new Business("BSB2", "A", "1", 2400.00);
+			try{bookings[6] = new Business("BSB2", "A", "1", 2400.00);} catch (InvalidId e) {}
 			bookings[6].book("Seed", "Data");
 			
 			//Eighth seed
-			bookings[7] = new Business("BSB3", "A", "1", 2400.00);
+			try{bookings[7] = new Business("BSB3", "A", "1", 2400.00);} catch (InvalidId e) {}
 			bookings[7].book("Seed", "Data");
 			bookings[7].checkInBag("Data", 10);
 			bookings[7].checkInBag("Data", 5);
 			
 			//Ninth seed
-			bookings[8] = new Business("BSB4", "A", "1", 2400.00);
+			try{bookings[8] = new Business("BSB4", "A", "1", 2400.00);} catch (InvalidId e) {}
 			bookings[8].book("Seed", "Data");
 			bookings[8].checkInBag("Data", 10);
 			bookings[8].checkInBag("Data", 5);
 			bookings[8].checkInBag("Data", 7);
 			
 			//Tenth seed
-			bookings[9] = new Business("BSB5", "A", "1", 2400.00);
+			try{bookings[9] = new Business("BSB5", "A", "1", 2400.00);} catch (InvalidId e) {}
 			bookings[9].book("Seed", "Data");
 			bookings[9].checkInBag("Data", 10);
 			bookings[9].checkInBag("Data", 5);
 			bookings[9].checkInBag("Data", 5);
-			bookings[9].collectBags(new DateTime(1));
+			try {
+				bookings[9].collectBags(new DateTime(1));
+			} catch (InvalidDate e){
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+			}
 			
 			//Eleventh seed
-			bookings[10] = new Business("BSB6", "A", "1", 2400.00);
+			try{bookings[10] = new Business("BSB6", "A", "1", 2400.00);} catch (InvalidId e) {}
 			bookings[10].book("Seed", "Data");
 			((Business)bookings[10]).setLimosinePickUp(true);
 			
 			//Twelfth seed
-			bookings[11] = new Business("BSB7", "A", "1", 2400.00);
+			try{bookings[11] = new Business("BSB7", "A", "1", 2400.00);} catch (InvalidId e) {}
 			bookings[11].book("Seed", "Data");
 			((Business)bookings[11]).setLimosinePickUp(false);
 			

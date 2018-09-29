@@ -348,7 +348,12 @@ public class Menu
 			while(!input.equalsIgnoreCase("Y") && !input.equalsIgnoreCase("N"))
 			{
 				System.out.print("Would you like to book a limosine? (Y/N):");
-				input = scanner.nextLine();
+				input = scanner.nextLine(); 
+				if(c(input)) 
+				{
+					facade.book("returnToMenu", "", "", "");
+					break;
+				}
 			}
 			if(input.equalsIgnoreCase("Y"))
 			{

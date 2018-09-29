@@ -1,6 +1,8 @@
 package airline;
 
 import utilities.DateTime;
+import utilities.InvalidDate;
+import utilities.InvalidId;
 
 /*
  * Class:			Booking
@@ -27,9 +29,14 @@ public class Booking
 	private String lastName;	
 	
 	
-	public Booking(String id, String rowNumber, String seatNumber, double fee) 
+	public Booking (String id, String rowNumber, String seatNumber, double fee) throws InvalidId
 	{
+		if(id.length() != 4)
+		{
+			throw new InvalidId("Error: ID length must be 3 characters long + prefix character");
+		}else
 		baggageId = id;
+		
 		this.rowNumber = rowNumber;
 		this.seatNumber = seatNumber;
 		this.standardFare = fee;
@@ -143,15 +150,19 @@ public class Booking
 		return passengerId.toUpperCase();
 	}
 	
-	public String collectBags(DateTime dateCollected) 
+	public String collectBags (DateTime dateCollected) throws InvalidDate 
 	{	
 		for(int i = 0; i < checkedBaggage.length; i++)
 		{
 			if(checkedBaggage[0] == null)
-				{
-					return "Error: You cannot collect before baggage has been checked in\n"
-							+ "       Or collecting after it has already been collected. \n";
-				}
+			{
+				return "Error: You cannot collect before baggage has been checked in\n"
+					 + "       Or collecting after it has already been collected. \n";
+			}
+			else if(DateTime.diffDays(dateCollected, checkedBaggage[i].getCheckInDate()) < 0)
+			{
+				throw new InvalidDate("Error: Date is in past from check in date.");
+			}
 		}
 		
 		for(int i = 0; i < checkedBaggage.length; i++)

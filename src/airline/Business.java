@@ -1,10 +1,12 @@
 package airline;
 
+import utilities.InvalidId;
+
 public class Business extends Booking
 {
 	private boolean limosinePickUp = false;
 
-	public Business(String id, String rowNumber, String seatNumber, double fee)
+	public Business(String id, String rowNumber, String seatNumber, double fee) throws InvalidId
 	{
 		super(id, rowNumber, seatNumber, fee);
 	}
