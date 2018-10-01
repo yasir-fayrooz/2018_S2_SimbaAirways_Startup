@@ -159,7 +159,7 @@ public class Business extends Booking
 		{
 			if(checkedBaggage[i] != null)
 			{
-				checkedBags += checkedBaggage[i].toString() + ":";
+				checkedBags += checkedBaggage[i].toString();
 			}
 		}
 		return id + ":" +

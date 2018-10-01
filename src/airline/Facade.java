@@ -79,7 +79,7 @@ public class Facade implements AirlineSystem
 	@Override
 	public void writeData()
 	{
-		
+		simbaAirways.writeData();;
 	}
 
 	@Override

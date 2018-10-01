@@ -9,7 +9,7 @@ import utilities.InvalidId;
  * Description:		The class represents a seat on a flight that can be booked 
  * Author:			[Yasir Fayrooz Ali] - [s3742162]
  */
-public class Booking
+public abstract class Booking
 {
 	//Baggage information
 	private String baggageId;
@@ -104,6 +104,18 @@ public class Booking
 		}
 	}
 	
+	public void loadCheckedBaggage(double weight, DateTime date)
+	{
+		for(int i = 0; i < checkedBaggage.length; i++)
+		{
+			if(checkedBaggage[i] == null)
+			{
+				checkedBaggage[i] = new Baggage(baggageId, passengerId(), weight, date);
+				break;
+			}
+		}
+	}
+	
 	public String getBaggageHistory()
 	{
 		String baggageHistory = "";
@@ -124,8 +136,26 @@ public class Booking
 			return "         Newest - Oldest\n" +
 					baggageHistory;
 	}
+	public Baggage[] getPreviousBaggagesChecked()
+	{
+		return previousBaggagesChecked;
+	}
 	
-	private String passengerId()
+	public void updatePreviousBaggage(Baggage baggage, DateTime collectedDate)
+	{
+		for(int j = 8; j >= 0; j--)
+		{
+			if(previousBaggagesChecked[j] != null)
+			{
+				previousBaggagesChecked[j + 1] = previousBaggagesChecked[j];
+				previousBaggagesChecked[j] = null;
+			}
+		}
+		previousBaggagesChecked[0] = baggage;
+		previousBaggagesChecked[0].collect(collectedDate);
+	}
+	
+	public String passengerId()
 	{
 		String firstNameID = "";
 		String lastNameID = "";
@@ -159,7 +189,7 @@ public class Booking
 				return "Error: You cannot collect before baggage has been checked in\n"
 					 + "       Or collecting after it has already been collected. \n";
 			}
-			else if(DateTime.diffDays(dateCollected, checkedBaggage[i].getCheckInDate()) < 0)
+			else if(checkedBaggage[i] != null && DateTime.diffDays(dateCollected, checkedBaggage[i].getCheckInDate()) < 0)
 			{
 				throw new InvalidDate("Error: Date is in past from check in date.");
 			}
@@ -191,6 +221,10 @@ public class Booking
 		}
 		firstName = null;
 		lastName = null;
+		if(baggageId.substring(0, 1).equals("B"))
+		{
+			standardFare = 2400.00;
+		}else
 		standardFare = 1200.00;
 		return "Baggage collection successfull \n" + toString();
 	}
@@ -302,7 +336,7 @@ public class Booking
 		{
 			if(checkedBaggage[i] != null)
 			{
-				checkedBags += checkedBaggage[i].toString() + ":";
+				checkedBags += checkedBaggage[i].toString();
 			}
 		}
 		return baggageId + ":" +

@@ -78,7 +78,7 @@ public class Baggage
 				   id + 
 				   ":" + weight + 
 				   ":" + checkInDate.getEightDigitDate() + 
-				   ":" + collectedDate.getEightDigitDate();
+				   ":" + collectedDate.getEightDigitDate() + ":";
 			
 			return checkedCollected;
 		}
@@ -88,7 +88,7 @@ public class Baggage
 				   id + 
 				   ":" + weight + 
 				   ":" + checkInDate.getEightDigitDate() +
-				   ":" + "NO";
+				   ":" + "NO" + ":";
 			
 			return checkedNotCollected;	
 		}

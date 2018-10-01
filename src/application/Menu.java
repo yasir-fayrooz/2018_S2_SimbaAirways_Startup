@@ -30,8 +30,16 @@ public class Menu
 		{
 			printMenu();
 			checkMenuInput();
+			
+			if(returnToMenu == false)
+			writeData();
 		}
 		scanner.close();
+	}
+	
+	private void writeData()
+	{
+		facade.writeData();
 	}
 	
 	private void printMenu()
